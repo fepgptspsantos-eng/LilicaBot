@@ -1,14 +1,17 @@
 import discord
 from discord.ext import commands
 
+# Configurações para a Lilica ler as mensagens e gerenciar membros
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 
+# O prefixo para os comandos nos seus clãs de Roblox e Polícia RP
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f'Lilica online como {bot.user}')
+    print(f'Lilica tecnológica online como {bot.user}')
 
 @bot.command()
 async def lock(ctx):
@@ -18,7 +21,8 @@ async def lock(ctx):
 @bot.command()
 async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
-    await ctx.send("🔓 Este canal foi liberado!")
+    await ctx.send("🔓 Este canal foi liberado pela Lilica!")
 
-bot.run('COLE_SEU_TOKEN_AQUI')
+# Seu Token oficial da Lilica inserido abaixo
+bot.run('MTQ3MjYxMDg1NTE3NzY4NzIyMw.Grd0Zk.JACiskkC2Op2u7A76i3dc-Ps5sxCH-p-YmC_Hw')
 
