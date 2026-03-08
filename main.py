@@ -1,5 +1,6 @@
 import os
 import discord
+import asyncio
 from discord.ext import commands
 
 # Configurações para a Lilica ler as mensagens e gerenciar membros
@@ -24,7 +25,16 @@ async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
     await ctx.send("🔓 Este canal foi liberado pela Lilica!")
 
-# Seu Token oficial da Lilica inserido abaixo
-bot.run(os.getenv('DISCORD_TOKEN'))
+# Função para rodar o bot com proteção contra o erro 429
+async def main():
+    try:
+        await bot.start(os.getenv('DISCORD_TOKEN'))
+    except discord.errors.HTTPException as e:
+        if e.status == 429:
+            print("O Discord bloqueou o acesso temporariamente (Erro 429).")
+        else:
+            raise e
 
-
+if __name__ == "__main__":
+    asyncio.run(main())
+    
