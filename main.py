@@ -24,5 +24,6 @@ async def unlock(ctx):
     await ctx.send("🔓 Este canal foi liberado pela Lilica!")
 
 # Seu Token oficial da Lilica inserido abaixo
-bot.run(MTQ3MjYxMDg1NTE3NzY4NzIyMw.G2IQ5X.3UMajpxdytxbA0qpynCWqaVoukTLB9zgUoWDoQ)
+bot.run(os.getenv('DISCORD_TOKEN'))
+
 
