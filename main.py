@@ -1,5 +1,6 @@
-import discord
-from discord.ext import commands
+import os
+
+import discord from discord.ext import commands
 
 # Configurações para a Lilica ler as mensagens e gerenciar membros
 intents = discord.Intents.default()
