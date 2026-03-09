@@ -4,10 +4,9 @@ from discord.ext import commands, tasks
 from discord import app_commands
 from datetime import datetime
 
-# Configurações de Intents
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
+# Configurações de Intent
+intents = discord.Intents.all()
+
 
 class MinhaLilica(commands.Bot):
     def __init__(self):
