@@ -14,65 +14,59 @@ class MinhaLilica(commands.Bot):
         super().__init__(command_prefix="!", intents=intents)
 
     async def setup_hook(self):
-        self.saudacao_automatica.start() # Inicia a vigília do relógio
+        self.saudacao_automatica.start() 
         await self.tree.sync()
-        print("Comandos e Automação da Lilica prontos!")
+        print("Lilica atualizada: Lock, Unlock, Ban e Automação prontos!")
 
 bot = MinhaLilica()
 
-# --- AUTOMAÇÃO DE SAUDAÇÃO ---
-ID_DO_CANAL = 1476747962364465234 # O ID que você me mandou!
+# --- 1. AUTOMAÇÃO DE SAUDAÇÃO ---
+ID_DO_CANAL = 1476747962364465234 
 
-@tasks.loop(minutes=1) # Checa a cada minuto para não perder o horário
+@tasks.loop(minutes=1)
 async def saudacao_automatica():
     canal = bot.get_channel(ID_DO_CANAL)
-    if not canal:
-        return
-
+    if not canal: return
     agora = datetime.now()
-    hora = agora.hour
-    minuto = agora.minute
+    if agora.minute == 0:
+        if agora.hour == 8:
+            await canal.send("☀️ **Bom dia!** A Lilica acordou para o RP!")
+        elif agora.hour == 13:
+            await canal.send("🌤️ **Boa tarde!** Lilica online e vigilante!")
+        elif agora.hour == 19:
+            await canal.send("🌙 **Boa noite!** Bom descanso a todos!")
 
-    # Configurado para mandar exatamente no minuto 00 de cada turno
-    if hora == 8 and minuto == 0:
-        await canal.send("☀️ **Bom dia, gente tecnológica!** A Lilica acabou de acordar para o RP!")
-    elif hora == 13 and minuto == 0:
-        await canal.send("🌤️ **Boa tarde!** Passando para lembrar que a Lilica está de olho no chat!")
-    elif hora == 19 and minuto == 0:
-        await canal.send("🌙 **Boa noite!** O chicote come, mas a Lilica deseja um ótimo descanso a todos!")
+# --- 2. COMANDOS DE BARRA (RECUPERADOS) ---
 
-# --- COMANDOS DE BARRA (/) ---
-
-@bot.tree.command(name="lock", description="Tranca o canal atual")
+@bot.tree.command(name="lock", description="Tranca o canal")
 @app_commands.checks.has_permissions(manage_channels=True)
 async def lock(interaction: discord.Interaction):
     await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=False)
-    await interaction.response.send_message("🔒 Este canal foi trancado pela Lilica!")
+    await interaction.response.send_message("🔒 Canal trancado!")
 
-@bot.tree.command(name="unlock", description="Libera o canal atual")
+@bot.tree.command(name="unlock", description="Libera o canal")
 @app_commands.checks.has_permissions(manage_channels=True)
 async def unlock(interaction: discord.Interaction):
     await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=True)
-    await interaction.response.send_message("🔓 Este canal foi liberado pela Lilica!")
+    await interaction.response.send_message("🔓 Canal liberado!")
 
 @bot.tree.command(name="ban", description="Bane um usuário")
 @app_commands.checks.has_permissions(ban_members=True)
 async def ban(interaction: discord.Interaction, membro: discord.Member, motivo: str = "Não informado"):
     await membro.ban(reason=motivo)
-    await interaction.response.send_message(f"🔨 O usuário {membro.name} foi banido por: {motivo}")
+    await interaction.response.send_message(f"🔨 {membro.name} banido: {motivo}")
 
-# --- EVENTOS ---
+# --- 3. EVENTOS E HISTÓRICO ---
 
 @bot.event
 async def on_ready():
-    print(f'Lilica tecnológica online como {bot.user}')
+    print(f'Lilica online como {bot.user}')
 
 @bot.event
 async def on_message(message):
-    if message.author == bot.user:
-        return
-    # Mostra o que o povo fala nos Logs da Railway
-    print(f"HISTÓRICO: [{message.channel}] {message.author}: {message.content}")
+    if message.author == bot.user: return
+    print(f"LOG: [{message.channel}] {message.author}: {message.content}")
     await bot.process_commands(message)
 
 bot.run(os.getenv('DISCORD_TOKEN'))
+
