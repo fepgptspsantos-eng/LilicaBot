@@ -1,41 +1,26 @@
-import os
-import discord
-from discord.ext import commands
-from discord import app_commands # Nova biblioteca para os comandos /
+# ... (mantenha o topo do código igual ao anterior)
 
-# Configurações de Intents
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
+# Comando de Barra: /ban
+@bot.tree.command(name="ban", description="Bane um usuário do servidor")
+@app_commands.checks.has_permissions(ban_members=True)
+async def ban(interaction: discord.Interaction, membro: discord.Member, motivo: str = "Não informado"):
+    await membro.ban(reason=motivo)
+    await interaction.response.send_message(f"🔨 O usuário {membro.name} foi banido por: {motivo}")
 
-# Criando o Bot
-class MinhaLilica(commands.Bot):
-    def __init__(self):
-        super().__init__(command_prefix="!", intents=intents)
-
-    async def setup_hook(self):
-        # Isso sincroniza os comandos / com o Discord
-        await self.tree.sync()
-        print("Comandos de barra sincronizados!")
-
-bot = MinhaLilica()
-
+# Sistema de Histórico (Vigiar conversas)
 @bot.event
-async def on_ready():
-    print(f'Lilica tecnológica online como {bot.user}')
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    
+    # Isso imprime no console da Railway tudo o que o povo fala
+    print(f"[{message.channel}] {message.author}: {message.content}")
+    
+    # Se quiser salvar num arquivo de texto na Railway:
+    with open("historico.txt", "a", encoding="utf-8") as f:
+        f.write(f"{message.created_at} - {message.author}: {message.content}\n")
 
-# Comando de Barra: /lock
-@bot.tree.command(name="lock", description="Tranca o canal atual")
-async def lock(interaction: discord.Interaction):
-    await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=False)
-    await interaction.response.send_message("🔒 Este canal foi trancado pela Lilica!")
+    await bot.process_commands(message)
 
-# Comando de Barra: /unlock
-@bot.tree.command(name="unlock", description="Libera o canal atual")
-async def unlock(interaction: discord.Interaction):
-    await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=True)
-    await interaction.response.send_message("🔓 Este canal foi liberado pela Lilica!")
-
-# Rodando o bot com o seu Token da Railway
-bot.run(os.getenv('DISCORD_TOKEN'))
+# ... (mantenha o bot.run lá no final)
 
